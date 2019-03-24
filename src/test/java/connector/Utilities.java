@@ -24,6 +24,12 @@ public class Utilities {
         return gson.fromJson(json, User.class);
     }
 
+    public User getUserByName(String name) {
+        String pathForUserById = USERS_PATH + "?Name=" + name;
+        String json = sendGetRequest(pathForUserById);
+        return gson.fromJson(json, User.class);
+    }
+
     public Game[] getAllGames() {
         String json = RestConnector.sendGetRequest(GAMES_PATH);
         Game[] games = gson.fromJson(json, Game[].class);

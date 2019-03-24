@@ -9,12 +9,12 @@ public class User {
     private String name;
 
     @SerializedName("Balance")
-    private float balance;
+    private double balance;
 
     @SerializedName("Currency")
     private String activeCurrency;
 
-    @SerializedName("Likes")
+    @SerializedName("likes")
     private String preferences;
 
     @SerializedName("High-Roller")
@@ -24,7 +24,7 @@ public class User {
 
     }
 
-    public User(int id, String name, float balance, String activeCurrency, String preferences, boolean isHighRoller) {
+    public User(int id, String name, double balance, String activeCurrency, String preferences, boolean isHighRoller) {
         this.id = id;
         this.name = name;
         this.balance = balance;
@@ -56,11 +56,11 @@ public class User {
         this.name = name;
     }
 
-    public float getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(float balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 
