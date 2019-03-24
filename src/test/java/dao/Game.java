@@ -3,7 +3,7 @@ package dao;
 import com.google.gson.annotations.SerializedName;
 
 public class Game {
-    private String id;
+    private int id;
 
     @SerializedName("Name")
     private String name;
@@ -15,12 +15,12 @@ public class Game {
     private String currency;
 
     @SerializedName("Stake")
-    private String stakes;
+    private float[] stakes;
 
     @SerializedName("StakesThisWeek")
-    private String stakesThisWeek;
+    private long stakesThisWeek;
 
-    public Game(String id, String name, String gameType, String currency, String stakes, String stakesThisWeek) {
+    public Game(int id, String name, String gameType, String currency, float[] stakes, long stakesThisWeek) {
         this.id = id;
         this.name = name;
         this.gameType = gameType;
@@ -36,11 +36,11 @@ public class Game {
     /**
      * Auto-generated methods
      **/
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -68,19 +68,19 @@ public class Game {
         this.currency = currency;
     }
 
-    public String getStakes() {
+    public float[] getStakes() {
         return stakes;
     }
 
-    public void setStakes(String stakes) {
+    public void setStakes(float[] stakes) {
         this.stakes = stakes;
     }
 
-    public String getStakesThisWeek() {
+    public long getStakesThisWeek() {
         return stakesThisWeek;
     }
 
-    public void setStakesThisWeek(String stakesThisWeek) {
+    public void setStakesThisWeek(long stakesThisWeek) {
         this.stakesThisWeek = stakesThisWeek;
     }
 }

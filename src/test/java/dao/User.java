@@ -3,14 +3,13 @@ package dao;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
-
-    private String id;
+    private int id;
 
     @SerializedName("Name")
     private String name;
 
     @SerializedName("Balance")
-    private String balance;
+    private float balance;
 
     @SerializedName("Currency")
     private String activeCurrency;
@@ -19,13 +18,13 @@ public class User {
     private String preferences;
 
     @SerializedName("High-Roller")
-    private String highRoller;
+    private boolean highRoller;
 
     private User() {
 
     }
 
-    public User(String id, String name, String balance, String activeCurrency, String preferences, String isHighRoller) {
+    public User(int id, String name, float balance, String activeCurrency, String preferences, boolean isHighRoller) {
         this.id = id;
         this.name = name;
         this.balance = balance;
@@ -41,11 +40,11 @@ public class User {
 
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -57,11 +56,11 @@ public class User {
         this.name = name;
     }
 
-    public String getBalance() {
+    public float getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
+    public void setBalance(float balance) {
         this.balance = balance;
     }
 
@@ -81,11 +80,11 @@ public class User {
         this.preferences = preferences;
     }
 
-    public String getHighRoller() {
+    public boolean getHighRoller() {
         return highRoller;
     }
 
-    public void setHighRoller(String highRoller) {
+    public void setHighRoller(boolean highRoller) {
         this.highRoller = highRoller;
     }
 }

@@ -1,8 +1,10 @@
 package connector;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -20,28 +22,7 @@ class RestConnector {
     private static final String HOST = "localhost";
     private static final int port = 3000;
 
-    private static final String USERS_PATH = "users";
-    private static final String GAMES_PATH = "games";
-
-    public static String getGameById(int id) {
-        String pathForGameById = GAMES_PATH + "/" + id;
-        return sendGetRequest(pathForGameById);
-    }
-
-    public static String getUserById(int id) {
-        String pathForUserById = USERS_PATH + "/" + id;
-        return sendGetRequest(pathForUserById);
-    }
-
-    public static String getAllGames() {
-        return sendGetRequest(GAMES_PATH);
-    }
-
-    public static String getAllUsers() {
-        return sendGetRequest(USERS_PATH);
-    }
-
-    private static String sendGetRequest(String path) {
+    static String sendGetRequest(String path) {
         URI uri;
         StringBuilder result = new StringBuilder();
         try {
@@ -64,9 +45,9 @@ class RestConnector {
         return result.toString();
     }
 
-    public static void sendPostRequest(String path, String inputJson) {
+    static HttpResponse sendPostRequest(String path, String inputJson) {
         URI uri;
-        StringBuilder result = new StringBuilder();
+        HttpResponse response = null;
         try {
             CloseableHttpClient client = HttpClients.createDefault();
             uri = new URIBuilder()
@@ -74,12 +55,33 @@ class RestConnector {
                     .setHost(HOST + ":" + port)
                     .setPath(path)
                     .build();
-            StringEntity stringEntity = new StringEntity(inputJson, ContentType.create("text/plain", "UTF-8"));
+            StringEntity stringEntity = new StringEntity(inputJson, ContentType.create("application/json", "UTF-8"));
             HttpPost httpPost = new HttpPost(uri);
             httpPost.setEntity(stringEntity);
-            CloseableHttpResponse response = client.execute(httpPost);
+            response = client.execute(httpPost);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
+        return response;
+    }
+
+    static HttpResponse sendPutRequest(String path, String inputJson) {
+        URI uri;
+        HttpResponse response = null;
+        try {
+            CloseableHttpClient client = HttpClients.createDefault();
+            uri = new URIBuilder()
+                    .setScheme("http")
+                    .setHost(HOST + ":" + port)
+                    .setPath(path)
+                    .build();
+            StringEntity stringEntity = new StringEntity(inputJson, ContentType.create("application/json", "UTF-8"));
+            HttpPut httpPut = new HttpPut(uri);
+            httpPut.setEntity(stringEntity);
+            response = client.execute(httpPut);
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+        return response;
     }
 }
