@@ -105,8 +105,9 @@ public class Stepdefs {
             assertEquals("James has uses GBP", currency, result.get().getActiveCurrency());
             assertEquals("James likes Bingo", preferences, result.get().getPreferences());
         } else {
+            fail("There is no new customer created");
         }
-        fail("There is no new customer created");
+
     }
 
     private boolean checkCurrency(User[] users) {
