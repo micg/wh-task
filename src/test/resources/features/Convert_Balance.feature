@@ -1,6 +1,6 @@
 Feature: I want ballance to be converted automatically to GBP
 
-Scenario: There are no other curencies than GBP
+Scenario: There are no other currencies than GBP
     Given there is default data in database
     When I get list of users
     Then all of them have their balances in GBP

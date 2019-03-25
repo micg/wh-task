@@ -5,11 +5,11 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import dao.Game;
 import dao.User;
 import org.junit.Assert;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -17,10 +17,12 @@ import static org.junit.Assert.assertTrue;
 public class Stepdefs {
 
     private static User[] users;
+    private static Game[] games;
 
     @Given("^there is default data in database$")
     public void useDefaultData() {
         users = new User[]{};
+        games = new Game[]{};
         // Some clever way to reset test data
     }
 
@@ -50,12 +52,29 @@ public class Stepdefs {
         utilities.updateUser(4, brian);
     }
 
+    @When("^I download list of games sorted by StakesThisWeek$")
+    public void downloadSortedListOfGames() {
+        Utilities utilities = new Utilities();
+        Map<String,String> parameters = new HashMap<>();
+        parameters.put("_sort", "StakesThisWeek");
+        parameters.put("_order", "desc");
+        games = utilities.getCustomGamesArray(parameters);
+    }
+
+    @When("^I download list of users that like slot games$")
+    public void downloadListOfUsersThatLikeSlots() {
+        Utilities utilities = new Utilities();
+        Map<String,String> parameters = new HashMap<>();
+        parameters.put("likes", "Slot Games");
+        users = utilities.getCustomUserArray(parameters);
+    }
+
     @Then("^all of them have their balances in GBP$")
     public void checkBalanceCurrency() {
         assertTrue("All currency codes are GBP", checkCurrency(users));
     }
 
-    @Then("^balance of user with id ó is converted to GBP$")
+    @Then("^balance of user with id 200 is converted to GBP$")
     public void checkCurrencyOfNewUser() {
         User user = new Utilities().getUserById(200);
         assertEquals("Currency of new user is GBP", "GBP", user.getActiveCurrency());
@@ -101,6 +120,22 @@ public class Stepdefs {
             assertEquals("James has 20 GBP", balance, james.getBalance(), 0);
             assertEquals("James has uses GBP", currency, james.getActiveCurrency());
             assertEquals("James likes Bingo", preferences, james.getPreferences());
+    }
+
+    @Then("^Game called Starburst is most popular$")
+    public void checkIfStarburstIsMostPopular() {
+        assertEquals("Most popular game is Starburst", "Starburst", games[0].getName());
+    }
+    @Then("^I get list of three users: user1, Brian and Paul$")
+    public void getUsersThatLikesSlots() {
+        assertEquals("There are three users in list", 3, users.length);
+        List<String> names = new ArrayList<>();
+        for (User user : users) {
+            names.add(user.getName());
+        }
+        assertTrue("user1 is present", names.contains("user1"));
+        assertTrue("Brian is present", names.contains("Brian"));
+        assertTrue("Paul is present", names.contains("Paul"));
     }
 
     private boolean checkCurrency(User[] users) {

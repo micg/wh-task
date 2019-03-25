@@ -27,6 +27,26 @@ public class Utilities {
     }
 
     /**
+     * Returns custom game array
+     * @param parameters custom parameters
+     * @return Game[]
+     */
+    public Game[] getCustomGamesArray(Map<String,String> parameters) {
+        String json = sendGetRequest(GAMES_PATH, parameters);
+        return gson.fromJson(json, Game[].class);
+    }
+
+    /**
+     * Returns custom user array
+     * @param parameters custom parameters
+     * @return User[]
+     */
+    public User[] getCustomUserArray(Map<String,String> parameters) {
+        String json = sendGetRequest(USERS_PATH, parameters);
+        return gson.fromJson(json, User[].class);
+    }
+
+    /**
      * Returns User by ID
      * @param id id
      * @return User
