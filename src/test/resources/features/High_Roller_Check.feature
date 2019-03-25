@@ -1,4 +1,4 @@
-Feature: Check if there is a High-Roller
+Feature: I want to know if there is a High-Roller
 
 Scenario: There is a High-Roller in database fed with default data
     Given there is default data in database

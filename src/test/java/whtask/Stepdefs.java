@@ -10,9 +10,9 @@ import org.junit.Assert;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Stepdefs {
 
@@ -20,7 +20,8 @@ public class Stepdefs {
 
     @Given("^there is default data in database$")
     public void useDefaultData() {
-        // Reset test data
+        users = new User[]{};
+        // Some clever way to reset test data
     }
 
     @When("^I get list of users$")
@@ -41,7 +42,7 @@ public class Stepdefs {
         new Utilities().createNewUser(new User(id, name, balance, currency, preferences, isHighRoller));
     }
 
-    @When("^I update ballance of user with id 4$")
+    @When("^I update balance of user with id 4 by 20000$")
     public void moreMoneyForBrian() {
         Utilities utilities = new Utilities();
         User brian = utilities.getUserById(4);
@@ -54,7 +55,7 @@ public class Stepdefs {
         assertTrue("All currency codes are GBP", checkCurrency(users));
     }
 
-    @Then("^balance of user with id 200 is converted to GBP$")
+    @Then("^balance of user with id ó is converted to GBP$")
     public void checkCurrencyOfNewUser() {
         User user = new Utilities().getUserById(200);
         assertEquals("Currency of new user is GBP", "GBP", user.getActiveCurrency());
@@ -84,7 +85,7 @@ public class Stepdefs {
 
     @Then("^user of id 4 have more money$")
     public void checkNewBalance() {
-        double briansBalance = new Utilities().getUserByName("Brian").getBalance();
+        double briansBalance = new Utilities().getUserByName("Brian")[0].getBalance();
         assertEquals("Brian should have 20008.0 GBP", 20008, new Utilities().getUserById(4).getBalance(), 0);
     }
 
@@ -96,18 +97,10 @@ public class Stepdefs {
         String currency = data.get(1).get(2);
         String preferences = data.get(1).get(3);
 
-        User[] users = new Utilities().getAllUsers();
-        Optional<User> result = Arrays.stream(users)
-                .filter(user -> user.getName().equals(name))
-                .findFirst();
-        if (result.isPresent()) {
-            assertEquals("James has 20 GBP", balance, result.get().getBalance(), 0);
-            assertEquals("James has uses GBP", currency, result.get().getActiveCurrency());
-            assertEquals("James likes Bingo", preferences, result.get().getPreferences());
-        } else {
-            fail("There is no new customer created");
-        }
-
+        User james = new Utilities().getUserByName(name)[0];
+            assertEquals("James has 20 GBP", balance, james.getBalance(), 0);
+            assertEquals("James has uses GBP", currency, james.getActiveCurrency());
+            assertEquals("James likes Bingo", preferences, james.getPreferences());
     }
 
     private boolean checkCurrency(User[] users) {

@@ -1,4 +1,4 @@
-Feature: Add new customer
+Feature: I want to be able to add new customer
 
 Scenario: Add new customer
     Given there is default data in database

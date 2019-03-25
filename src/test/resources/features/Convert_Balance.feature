@@ -1,4 +1,4 @@
-Feature: Ballance is automatically converted to GBP
+Feature: I want ballance to be converted automatically to GBP
 
 Scenario: There are no other curencies than GBP
     Given there is default data in database
