@@ -13,22 +13,30 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class Stepdefs {
 
     private static User[] users;
     private static Game[] games;
+    private static Map<User, Map<Game, Map<Float, Integer>>> possibleBets;
 
     @Given("^there is default data in database$")
     public void useDefaultData() {
         users = new User[]{};
         games = new Game[]{};
+        possibleBets = new HashMap<>();
         // Some clever way to reset test data
     }
 
     @When("^I get list of users$")
     public void getUsers() {
         users = new Utilities().getAllUsers();
+    }
+
+    @When("^I get list of games")
+    public void getGames() {
+        games = new Utilities().getAllGames();
     }
 
     @When("^I add new user with parameters$")
@@ -55,7 +63,7 @@ public class Stepdefs {
     @When("^I download list of games sorted by StakesThisWeek$")
     public void downloadSortedListOfGames() {
         Utilities utilities = new Utilities();
-        Map<String,String> parameters = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("_sort", "StakesThisWeek");
         parameters.put("_order", "desc");
         games = utilities.getCustomGamesArray(parameters);
@@ -64,10 +72,30 @@ public class Stepdefs {
     @When("^I download list of users that like slot games$")
     public void downloadListOfUsersThatLikeSlots() {
         Utilities utilities = new Utilities();
-        Map<String,String> parameters = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("likes", "Slot Games");
         users = utilities.getCustomUserArray(parameters);
     }
+
+    @When("^I prepare list of possible bets for every user$")
+    public void getListOfPossibleBets() {
+        Map<User, Map<Game, Map<Float, Integer>>> result = new HashMap<>();
+        for (User user : users) {
+            double balance = user.getBalance();
+            Map<Game, Map<Float, Integer>> stakesAtGame = new HashMap<>();
+            for (Game game : games) {
+                Map<Float, Integer> possibleBets = new HashMap<>();
+                for (float stake : game.getStakes()) {
+                    Integer numberOfBets = new Double(balance / stake).intValue();
+                    possibleBets.put(stake, numberOfBets);
+                }
+                stakesAtGame.put(game, possibleBets);
+            }
+            result.put(user, stakesAtGame);
+        }
+        possibleBets = result;
+    }
+
 
     @Then("^all of them have their balances in GBP$")
     public void checkBalanceCurrency() {
@@ -117,15 +145,16 @@ public class Stepdefs {
         String preferences = data.get(1).get(3);
 
         User james = new Utilities().getUserByName(name)[0];
-            assertEquals("James has 20 GBP", balance, james.getBalance(), 0);
-            assertEquals("James has uses GBP", currency, james.getActiveCurrency());
-            assertEquals("James likes Bingo", preferences, james.getPreferences());
+        assertEquals("James has 20 GBP", balance, james.getBalance(), 0);
+        assertEquals("James has uses GBP", currency, james.getActiveCurrency());
+        assertEquals("James likes Bingo", preferences, james.getPreferences());
     }
 
     @Then("^Game called Starburst is most popular$")
     public void checkIfStarburstIsMostPopular() {
         assertEquals("Most popular game is Starburst", "Starburst", games[0].getName());
     }
+
     @Then("^I get list of three users: user1, Brian and Paul$")
     public void getUsersThatLikesSlots() {
         assertEquals("There are three users in list", 3, users.length);
@@ -138,10 +167,26 @@ public class Stepdefs {
         assertTrue("Paul is present", names.contains("Paul"));
     }
 
+    @Then("^I get list of at least five users and informations how many bets they can make$")
+    public void checkPossibleBets() {
+        assertTrue("List of possible bets has at least five entries", possibleBets.size() > 5);
+        assertTrue("There are five games in each entry", checkIfThereAreFiveGames(possibleBets));
+    }
+
+
     private boolean checkCurrency(User[] users) {
         for (User user : users) {
             if (!user.getActiveCurrency().equals("GPB")) {
                 return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkIfThereAreFiveGames(Map<User, Map<Game, Map<Float, Integer>>> possibleBets) {
+        for (User user : possibleBets.keySet()) {
+            if (possibleBets.get(user).size() != 5) {
+                fail("There are different number of games than 5 for " + user.getName());
             }
         }
         return true;
